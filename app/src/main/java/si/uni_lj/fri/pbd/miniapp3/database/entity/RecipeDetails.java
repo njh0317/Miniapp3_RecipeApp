@@ -682,4 +682,5 @@ public class RecipeDetails {
                 ", strSource='" + strSource + '\'' +
                 '}';
     }
+
 }

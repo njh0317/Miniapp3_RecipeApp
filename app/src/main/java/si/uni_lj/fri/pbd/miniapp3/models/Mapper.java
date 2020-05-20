@@ -1,15 +1,65 @@
 package si.uni_lj.fri.pbd.miniapp3.models;
-
 import si.uni_lj.fri.pbd.miniapp3.database.entity.RecipeDetails;
+import si.uni_lj.fri.pbd.miniapp3.models.dto.RecipeDetailsDTO;
 
 public final class Mapper {
 
     public static RecipeSummaryIM mapRecipeDetailsToRecipeSummaryIm(RecipeDetails rec) {
         return new RecipeSummaryIM(rec.getStrMeal(), rec.getStrMealThumb(), rec.getIdMeal());
     }
+    public static RecipeDetails mapRecipeDetailsIMToRecipeDetails(Boolean isFavorite, RecipeDetailsIM im){
+        return new RecipeDetails(
+                isFavorite,
+                im.getIdMeal(),
+                im.getStrMeal(),
+                im.getStrCategory(),
+                im.getStrArea(),
+                im.getStrInstructions(),
+                im.getStrMealThumb(),
+                im.getStrYoutube(),
+                im.getStrIngredient1(),
+                im.getStrIngredient2(),
+                im.getStrIngredient3(),
+                im.getStrIngredient4(),
+                im.getStrIngredient5(),
+                im.getStrIngredient6(),
+                im.getStrIngredient7(),
+                im.getStrIngredient8(),
+                im.getStrIngredient9(),
+                im.getStrIngredient10(),
+                im.getStrIngredient11(),
+                im.getStrIngredient12(),
+                im.getStrIngredient13(),
+                im.getStrIngredient14(),
+                im.getStrIngredient15(),
+                im.getStrIngredient16(),
+                im.getStrIngredient17(),
+                im.getStrIngredient18(),
+                im.getStrIngredient19(),
+                im.getStrIngredient20(),
+                im.getStrMeasure1(),
+                im.getStrMeasure2(),
+                im.getStrMeasure3(),
+                im.getStrMeasure4(),
+                im.getStrMeasure5(),
+                im.getStrMeasure6(),
+                im.getStrMeasure7(),
+                im.getStrMeasure8(),
+                im.getStrMeasure9(),
+                im.getStrMeasure10(),
+                im.getStrMeasure11(),
+                im.getStrMeasure12(),
+                im.getStrMeasure13(),
+                im.getStrMeasure14(),
+                im.getStrMeasure15(),
+                im.getStrMeasure16(),
+                im.getStrMeasure17(),
+                im.getStrMeasure18(),
+                im.getStrMeasure19(),
+                im.getStrMeasure20(),
+                im.getStrSource());
+    }
 
-    // TODO: Uncomment the code below
-/*
     public static RecipeDetails mapRecipeDetailsDtoToRecipeDetails(Boolean isFavorite, RecipeDetailsDTO dto) {
         return new RecipeDetails(
                 isFavorite,
@@ -113,7 +163,7 @@ public final class Mapper {
                 dto.getStrMeasure19(),
                 dto.getStrMeasure20(),
                 dto.getStrSource());
-    }*/
+    }
 
     public static RecipeDetailsIM mapRecipeDetailsToRecipeDetailsIm(Boolean isFavorite, RecipeDetails dto) {
         return new RecipeDetailsIM(

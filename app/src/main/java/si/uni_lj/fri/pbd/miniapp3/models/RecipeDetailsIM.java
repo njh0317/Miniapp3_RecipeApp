@@ -370,4 +370,53 @@ public class RecipeDetailsIM {
                 '}';
     }
 
+    public String ingredientString() {
+        return strIngredient1 +
+                (strIngredient2==null||strIngredient2.trim().length()==0?"":", "+ strIngredient2)+
+                (strIngredient3==null||strIngredient3.trim().length()==0?"":", "+ strIngredient3)+
+                (strIngredient4==null||strIngredient4.trim().length()==0?"":", "+ strIngredient4)+
+                (strIngredient5==null||strIngredient5.trim().length()==0?"":", "+ strIngredient5)+
+                (strIngredient6==null||strIngredient6.trim().length()==0?"":", "+ strIngredient6)+
+                (strIngredient7==null||strIngredient7.trim().length()==0?"":", "+ strIngredient7)+
+                (strIngredient8==null||strIngredient8.trim().length()==0?"":", "+ strIngredient8)+
+                (strIngredient9==null||strIngredient9.trim().length()==0?"":", "+ strIngredient9)+
+                (strIngredient10==null||strIngredient10.trim().length()==0?"":", "+ strIngredient10)+
+                (strIngredient11==null||strIngredient11.trim().length()==0?"":", "+ strIngredient11)+
+                (strIngredient12==null||strIngredient12.trim().length()==0?"":", "+ strIngredient12)+
+                (strIngredient13==null||strIngredient13.trim().length()==0?"":", "+ strIngredient13)+
+                (strIngredient14==null||strIngredient14.trim().length()==0?"":", "+ strIngredient14)+
+                (strIngredient15==null||strIngredient15.trim().length()==0?"":", "+ strIngredient15)+
+                (strIngredient16==null||strIngredient16.trim().length()==0?"":", "+ strIngredient16)+
+                (strIngredient17==null||strIngredient17.trim().length()==0?"":", "+ strIngredient17)+
+                (strIngredient18==null||strIngredient18.trim().length()==0?"":", "+ strIngredient18)+
+                (strIngredient19==null||strIngredient19.trim().length()==0?"":", "+ strIngredient19)+
+                (strIngredient20==null||strIngredient20.trim().length()==0?"":", "+ strIngredient20);
+
+    }
+
+    public String measurementString() {
+        return strMeasure1 +
+                (strMeasure2==null||strMeasure2.trim().length()==0?"":", "+ strMeasure2)+
+                (strMeasure3==null||strMeasure3.trim().length()==0?"":", "+ strMeasure3)+
+                (strMeasure4==null||strMeasure4.trim().length()==0?"":", "+ strMeasure4)+
+                (strMeasure5==null||strMeasure5.trim().length()==0?"":", "+ strMeasure5)+
+                (strMeasure6==null||strMeasure6.trim().length()==0?"":", "+ strMeasure6)+
+                (strMeasure7==null||strMeasure7.trim().length()==0?"":", "+ strMeasure7)+
+                (strMeasure8==null||strMeasure8.trim().length()==0?"":", "+ strMeasure8)+
+                (strMeasure9==null||strMeasure9.trim().length()==0?"":", "+ strMeasure9)+
+                (strMeasure10==null||strMeasure10.trim().length()==0?"":", "+ strMeasure10)+
+                (strMeasure11==null||strMeasure11.trim().length()==0?"":", "+ strMeasure11)+
+                (strMeasure12==null||strMeasure12.trim().length()==0?"":", "+ strMeasure12)+
+                (strMeasure13==null||strMeasure13.trim().length()==0?"":", "+ strMeasure13)+
+                (strMeasure14==null||strMeasure14.trim().length()==0?"":", "+ strMeasure14)+
+                (strMeasure15==null||strMeasure15.trim().length()==0?"":", "+ strMeasure15)+
+                (strMeasure16==null||strMeasure16.trim().length()==0?"":", "+ strMeasure16)+
+                (strMeasure17==null||strMeasure17.trim().length()==0?"":", "+ strMeasure17)+
+                (strMeasure18==null||strMeasure18.trim().length()==0?"":", "+ strMeasure18)+
+                (strMeasure19==null||strMeasure19.trim().length()==0?"":", "+ strMeasure19)+
+                (strMeasure20==null||strMeasure20.trim().length()==0?"":", "+ strMeasure20);
+
+
+    }
+
 }

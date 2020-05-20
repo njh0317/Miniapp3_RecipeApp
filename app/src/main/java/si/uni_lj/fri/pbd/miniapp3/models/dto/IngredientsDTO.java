@@ -10,7 +10,6 @@ public class IngredientsDTO {
     @SerializedName("meals")
     @Expose
     private List<IngredientDTO> ingredients;
-
     public List<IngredientDTO> getIngredients() {
         return ingredients;
     }

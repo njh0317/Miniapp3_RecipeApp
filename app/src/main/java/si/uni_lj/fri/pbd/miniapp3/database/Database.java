@@ -1,19 +1,16 @@
 package si.uni_lj.fri.pbd.miniapp3.database;
-
 import android.content.Context;
-
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import si.uni_lj.fri.pbd.miniapp3.Constants;
+import si.uni_lj.fri.pbd.miniapp3.database.dao.RecipeDao;
 import si.uni_lj.fri.pbd.miniapp3.database.entity.RecipeDetails;
 
 @androidx.room.Database(entities = {RecipeDetails.class}, version = 1, exportSchema = false)
 public abstract class Database extends RoomDatabase {
-
-
-    // TODO: add a DAO reference
-
-
+    private static final int NUMBER_OF_THREADS = 4;
     private static volatile Database INSTANCE;
 
     public static Database getDatabase(final Context context) {
@@ -29,6 +26,10 @@ public abstract class Database extends RoomDatabase {
         }
         return INSTANCE;
     }
+    public abstract RecipeDao recipeDao();
+
+    static final ExecutorService databaseWriteExecutor =
+            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
 
 }
