@@ -20,7 +20,7 @@ import java.util.List;
 
 import si.uni_lj.fri.pbd.miniapp3.R;
 import si.uni_lj.fri.pbd.miniapp3.adapter.RecyclerViewAdapter;
-import si.uni_lj.fri.pbd.miniapp3.database.MainViewModel;
+import si.uni_lj.fri.pbd.miniapp3.database.Database;
 import si.uni_lj.fri.pbd.miniapp3.database.entity.RecipeDetails;
 import si.uni_lj.fri.pbd.miniapp3.models.Mapper;
 import si.uni_lj.fri.pbd.miniapp3.models.RecipeSummaryIM;
@@ -28,7 +28,6 @@ import si.uni_lj.fri.pbd.miniapp3.models.RecipeSummaryIM;
 public class FavoritesFragment extends Fragment {
 
     SwipeRefreshLayout mSwipeRefreshLayout;
-    private MainViewModel mViewModel;
     private RecyclerViewAdapter adapter;
 
     @Override
@@ -46,7 +45,6 @@ public class FavoritesFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
         mSwipeRefreshLayout = getActivity().findViewById(R.id.swipe2);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -67,7 +65,8 @@ public class FavoritesFragment extends Fragment {
     }
 
     private void observerSetup() {
-        mViewModel.getAllRecipes().observe(getViewLifecycleOwner(),
+        Database db = Database.getDatabase(getActivity());
+        db.recipeDao().getAllFood().observe(getViewLifecycleOwner(),
                 new Observer<List<RecipeDetails>>(){
                     @Override
                     public void onChanged(@Nullable final List<RecipeDetails> products) {
@@ -87,5 +86,6 @@ public class FavoritesFragment extends Fragment {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));//getActivity()?
         recyclerView.setAdapter(adapter);
     }
+
 
 }

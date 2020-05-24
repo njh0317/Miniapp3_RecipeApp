@@ -1,12 +1,9 @@
 package si.uni_lj.fri.pbd.miniapp3.ui;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -16,12 +13,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import si.uni_lj.fri.pbd.miniapp3.R;
-import si.uni_lj.fri.pbd.miniapp3.database.MainViewModel;
+import si.uni_lj.fri.pbd.miniapp3.database.Database;
+import si.uni_lj.fri.pbd.miniapp3.database.dao.RecipeDao;
 import si.uni_lj.fri.pbd.miniapp3.database.entity.RecipeDetails;
 import si.uni_lj.fri.pbd.miniapp3.models.Mapper;
 import si.uni_lj.fri.pbd.miniapp3.models.RecipeDetailsIM;
@@ -38,10 +37,8 @@ public class DetailsActivity extends AppCompatActivity {
     TextView measurements;
     TextView instructions;
     ImageView image;
-    private MainViewModel mViewModel;
+    Database db;
     ArrayList<RecipeDetailsIM> list;
-
-
 
     Button but;
     @Override
@@ -63,15 +60,18 @@ public class DetailsActivity extends AppCompatActivity {
         ingredients=(TextView)findViewById(R.id.textview_ingredients2);
         measurements=(TextView)findViewById(R.id.textview_measurements2);
         image = (ImageView)findViewById(R.id.imageview);
-        mViewModel = new ViewModelProvider(this).get(MainViewModel.class);
-
-
+        db = Database.getDatabase(this);
 
         if(beforeActivity == 1) {
             findDetails();
         }else if(beforeActivity == 2){
-            findDetailsinDB();
-            observerSetup();
+            try {
+                observerSetup();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         but.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,12 +80,14 @@ public class DetailsActivity extends AppCompatActivity {
                 if (!foodnum.equals("")) {
                     if(but.getText().toString().equals(getString(R.string.delete)))
                     {
-                        mViewModel.deleteProduct(list.get(0).getIdMeal());
+                        new deleteAsyncTask(db.recipeDao()).execute(list.get(0).getIdMeal());
+                        //mViewModel.deleteProduct(list.get(0).getIdMeal());
                         but.setText(R.string.add);
                     }
                     else if(but.getText().toString().equals(getString(R.string.add))) {
                         RecipeDetails recipe = Mapper.mapRecipeDetailsIMToRecipeDetails(true, list.get(0));
-                        mViewModel.insertProduct(recipe);
+                        new InsertAsyncTask(db.recipeDao()).execute(recipe);
+                        //mViewModel.insertProduct(recipe);
                         but.setText(R.string.delete);
                     }
                 }
@@ -93,36 +95,28 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
     }
+    private void observerSetup() throws ExecutionException, InterruptedException {
+        RecipeDetails products = new findAsyncTask(db.recipeDao()).execute(foodnum).get();
 
-    private void observerSetup() {
+        if (products!=null) {
 
-        mViewModel.getSearchResults().observe(this,
-                new Observer<RecipeDetails>() {
-                    @Override
-                    public void onChanged(@Nullable final RecipeDetails products) {
-                        if (products!=null) {
+            RecipeDetailsIM recipe = Mapper.mapRecipeDetailsToRecipeDetailsIm(true,products);
+            list = new ArrayList<RecipeDetailsIM>();
+            list.add(recipe);
+            strMeal.setText(recipe.getStrMeal());
+            strCountry.setText(recipe.getStrArea());
+            Glide.with(DetailsActivity.this).load(recipe.getStrMealThumb()).into(image);
+            instructions.setText(recipe.getStrInstructions());
+            ingredients.setText(recipe.ingredientString());
+            measurements.setText(recipe.measurementString());
+        }
+        if(beforeActivity == 1)
+        {
+            if(products!=null){
+                but.setText(R.string.delete);
+            }
+        }
 
-                            RecipeDetailsIM recipe = Mapper.mapRecipeDetailsToRecipeDetailsIm(true,products);
-                            list = new ArrayList<RecipeDetailsIM>();
-                            list.add(recipe);
-                            strMeal.setText(recipe.getStrMeal());
-                            strCountry.setText(recipe.getStrArea());
-                            Glide.with(DetailsActivity.this).load(recipe.getStrMealThumb()).into(image);
-                            instructions.setText(recipe.getStrInstructions());
-                            ingredients.setText(recipe.ingredientString());
-                            measurements.setText(recipe.measurementString());
-                        }
-                        if(beforeActivity == 1)
-                        {
-                            if(products!=null){
-                                but.setText(R.string.delete);
-                            }
-                        }
-                    }
-                });
-    }
-    private void findDetailsinDB() {
-        mViewModel.findProduct(foodnum);
     }
 
     private void findDetails(){
@@ -137,8 +131,13 @@ public class DetailsActivity extends AppCompatActivity {
                 RecipesByIdDTO food = response.body();
                 list = (ArrayList<RecipeDetailsIM>) food.getMeals();
                 if(list!=null) {
-                    findDetailsinDB();
-                    observerSetup();
+                    try {
+                        observerSetup();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     strMeal.setText(list.get(0).getStrMeal());
                     strCountry.setText(list.get(0).getStrArea());
                     Glide.with(DetailsActivity.this).load(list.get(0).getStrMealThumb()).into(image);
@@ -153,9 +152,49 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<RecipesByIdDTO> call, Throwable t) {
 
-
             }});
 
+    }
+    public static class InsertAsyncTask extends AsyncTask<RecipeDetails, Void, Void> {
+        private RecipeDao recipedao;
+
+        public  InsertAsyncTask(RecipeDao recipedao){
+            this.recipedao = recipedao;
+        }
+
+        @Override
+        protected Void doInBackground(RecipeDetails... recipeDetails) {
+            recipedao.insertRecipe(recipeDetails[0]);
+            return null;
+        }
+    }
+
+    public static class deleteAsyncTask extends AsyncTask<String, Void, Void> {
+        private RecipeDao recipedao;
+
+        public deleteAsyncTask(RecipeDao recipedao){
+            this.recipedao = recipedao;
+        }
+
+        @Override
+        protected Void doInBackground(String... id) {
+            recipedao.deleteRecipe(id[0]);
+            return null;
+        }
+    }
+
+    public static class findAsyncTask extends AsyncTask<String, Void, RecipeDetails> {
+        private RecipeDao recipedao;
+
+        public findAsyncTask(RecipeDao recipedao){
+            this.recipedao = recipedao;
+        }
+
+        @Override
+        protected RecipeDetails doInBackground(String... id) {
+            return recipedao.getRecepiById(id[0]);
+
+        }
     }
 
 }

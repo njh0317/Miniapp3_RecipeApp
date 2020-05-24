@@ -1,5 +1,7 @@
 package si.uni_lj.fri.pbd.miniapp3.database;
 import android.content.Context;
+import android.os.AsyncTask;
+
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import java.util.concurrent.ExecutorService;
@@ -19,8 +21,8 @@ public abstract class Database extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                             Database.class, Constants.DB_NAME)
-                            .allowMainThreadQueries()
                             .build();
+                    //background
                 }
             }
         }
