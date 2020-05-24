@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -36,16 +37,20 @@ import si.uni_lj.fri.pbd.miniapp3.rest.ServiceGenerator;
 import si.uni_lj.fri.pbd.miniapp3.ui.Network;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.jetbrains.annotations.NotNull;
+
 public class SearchFragment extends Fragment {
     private MaterialProgressBar mprogressbar;
     private String[] item;
-    Spinner spinner;
+    private Spinner spinner;
     private RecyclerViewAdapter adapter;
-    SwipeRefreshLayout mSwipeRefreshLayout;
-    int status;
-    long lastupdate = 0;
-    long now;
-    String nowingrId;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private int status;
+    private TextView view1;
+    private long lastupdate = 0;
+    private long now;
+    private String nowingrId;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +60,12 @@ public class SearchFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        view1 = getActivity().findViewById(R.id.textview);
+        view1.setVisibility(View.INVISIBLE);
         mSwipeRefreshLayout = getActivity().findViewById(R.id.swipe);
         mprogressbar = getActivity().findViewById(R.id.progress);
         mprogressbar.setIndeterminateDrawable(new IndeterminateHorizontalProgressDrawable(getActivity()));
-        mprogressbar.setVisibility(getView().GONE);
+        mprogressbar.setVisibility(View.GONE);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -100,7 +107,7 @@ public class SearchFragment extends Fragment {
         recyclerSetup();
     }
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         status = Network.getConnectivityStatus(getActivity());
         if(status == 3) connectionAlert();
@@ -125,13 +132,12 @@ public class SearchFragment extends Fragment {
     }
     private void callIngredient() {
         RestAPI api;
-        ServiceGenerator serviceGenerator = new ServiceGenerator();
-        api = serviceGenerator.createService(RestAPI.class);
+        api = ServiceGenerator.createService(RestAPI.class);
         Call<IngredientsDTO> call = api.getAllIngredients();
 
         call.enqueue(new Callback<IngredientsDTO>() {
             @Override
-            public void onResponse(Call<IngredientsDTO> call, Response<IngredientsDTO> response) {
+            public void onResponse(@NotNull Call<IngredientsDTO> call, @NotNull Response<IngredientsDTO> response) {
                 IngredientsDTO ingredients = response.body();
 
                 ArrayList<IngredientDTO> list = (ArrayList<IngredientDTO>) ingredients.getIngredients();
@@ -163,19 +169,19 @@ public class SearchFragment extends Fragment {
                     item[0] = "no Ingredient";
                     SpinnerAdapter adapter = new SpinnerAdapter(item, getActivity());
                     spinner.setAdapter(adapter);
+
                 }
             }
             @Override
-            public void onFailure(Call<IngredientsDTO> call, Throwable t) {
+            public void onFailure(@NotNull Call<IngredientsDTO> call, @NotNull Throwable t) {
             }
         });
     }
 
     private void callfoodbyingredient(String ingred){
-        mprogressbar.setVisibility(getView().VISIBLE);
+        mprogressbar.setVisibility(View.VISIBLE);
         RestAPI api;
-        ServiceGenerator serviceGenerator = new ServiceGenerator();
-        api = serviceGenerator.createService(RestAPI.class);
+        api = ServiceGenerator.createService(RestAPI.class);
         Call<RecipesByIngredientDTO> call = api.getfood(ingred);
         call.enqueue(new Callback<RecipesByIngredientDTO>()
         {
@@ -185,6 +191,7 @@ public class SearchFragment extends Fragment {
                 ArrayList<RecipeSummaryIM> list = (ArrayList<RecipeSummaryIM>) food.getRecipes();
                 if(list!=null&&list.size()>0)
                 {
+                    view1.setVisibility(View.GONE);
                     adapter.setRecipelist(list);
                 }
                 else if(list==null)
@@ -192,17 +199,20 @@ public class SearchFragment extends Fragment {
                     adapter.setRecipelist(list);
                     Toast.makeText(getActivity(),"No recipe",
                             Toast.LENGTH_LONG).show();
+                    view1.setVisibility(View.VISIBLE);
+
                 }
-                mprogressbar.setVisibility(getView().GONE);
+                mprogressbar.setVisibility(View.GONE);
                 lastupdate = System.currentTimeMillis()/1000;
 
             }
             @Override
-            public void onFailure(Call<RecipesByIngredientDTO> call, Throwable t) {
+            public void onFailure(@NotNull Call<RecipesByIngredientDTO> call, @NotNull Throwable t) {
 
             }});
 
     }
+
     private void recyclerSetup() {
         RecyclerView recyclerView;
         adapter = new RecyclerViewAdapter(1);
