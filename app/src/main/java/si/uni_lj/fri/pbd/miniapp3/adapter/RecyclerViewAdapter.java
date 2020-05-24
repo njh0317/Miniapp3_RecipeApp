@@ -65,7 +65,6 @@ public class RecyclerViewAdapter extends
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     Intent intent = new Intent(view.getContext(), DetailsActivity.class);
                     intent.putExtra("id",recipelist.get(holder.getAdapterPosition()).getIdMeal());
                     intent.putExtra("nowActivity",beforelayout);
@@ -88,7 +87,6 @@ public class RecyclerViewAdapter extends
         TextView itemDetail;
         CardViewHolder(@NonNull View itemView) {
             super(itemView);
-
             itemImage = (ImageView)itemView.findViewById(R.id.image_view);
             itemDetail = (TextView)itemView.findViewById(R.id.text_view_content);
         }

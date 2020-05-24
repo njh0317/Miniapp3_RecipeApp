@@ -56,9 +56,7 @@ public class SearchFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mSwipeRefreshLayout = getActivity().findViewById(R.id.swipe);
-
         mprogressbar = getActivity().findViewById(R.id.progress);
-
         mprogressbar.setIndeterminateDrawable(new IndeterminateHorizontalProgressDrawable(getActivity()));
         mprogressbar.setVisibility(getView().GONE);
 
@@ -71,15 +69,26 @@ public class SearchFragment extends Fragment {
                     @Override
                     public void run() {
                         status = Network.getConnectivityStatus(getActivity());
+                        System.out.println("run : "+status);
                         if(status == 3) connectionAlert();
                         else {
                             now = System.currentTimeMillis()/1000;
-                            if(now - lastupdate<5)
-                                Toast.makeText(getActivity(),"swipe comes within 5 seconds since the last data download",
+                            if(now - lastupdate<5) {
+                                System.out.println("if : " + status);
+                                Toast.makeText(getActivity(), "swipe comes within 5 seconds since the last data download",
                                         Toast.LENGTH_LONG).show();
+                            }
                             else {
                                 //callIngredient();
-                                callfoodbyingredient(nowingrId);
+                                System.out.println("else : " + nowingrId);
+                                if(nowingrId ==null)
+                                {
+                                    callIngredient();
+                                }
+                                else {
+
+                                    callfoodbyingredient(nowingrId);
+                                }
                             }
                         }
                         mSwipeRefreshLayout.setRefreshing(false);
@@ -96,7 +105,6 @@ public class SearchFragment extends Fragment {
         status = Network.getConnectivityStatus(getActivity());
         if(status == 3) connectionAlert();
         View view;
-
         view = inflater.inflate(R.layout.fragment_search, container, false);
 
         return view;
